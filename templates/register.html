@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Register Organization – FoodBridge{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 3rem auto; padding: 0 1.5rem;">
+  <div class="card">
+    <div class="card-header" style="background: var(--surface-alt); flex-direction: column; align-items: flex-start; gap: 0.35rem;">
+      <h2 style="font-size: 1.65rem; font-weight: 800; color: var(--text-main);">Join the Food Redistribution Network</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Register your establishment, charity organization, or volunteer profile
+      </p>
+    </div>
+
+    <div class="card-body">
+      <form id="register-form">
+        <!-- Role Selector Radios -->
+        <div class="form-group">
+          <label class="form-label" style="font-size: 0.95rem; margin-bottom: 0.75rem;">Select Your Role in the Network</label>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            
+            <label style="cursor: pointer;">
+              <input type="radio" name="reg-role" value="donor" checked style="display: none;" id="role-donor">
+              <div class="card" style="padding: 1rem; text-align: center; border: 2px solid var(--primary); background: var(--primary-subtle); transition: var(--transition);" id="card-role-donor">
+                <div style="font-size: 1.8rem; margin-bottom: 0.35rem;">🏨</div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary-dark);">Food Donor</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Restaurant / Hotel / Banquet</div>
+              </div>
+            </label>
+
+            <label style="cursor: pointer;">
+              <input type="radio" name="reg-role" value="ngo" style="display: none;" id="role-ngo">
+              <div class="card" style="padding: 1rem; text-align: center; border: 2px solid var(--border); transition: var(--transition);" id="card-role-ngo">
+                <div style="font-size: 1.8rem; margin-bottom: 0.35rem;">🏠</div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">NGO / Shelter</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Food Bank / Orphanage</div>
+              </div>
+            </label>
+
+            <label style="cursor: pointer;">
+              <input type="radio" name="reg-role" value="volunteer" style="display: none;" id="role-volunteer">
+              <div class="card" style="padding: 1rem; text-align: center; border: 2px solid var(--border); transition: var(--transition);" id="card-role-volunteer">
+                <div style="font-size: 1.8rem; margin-bottom: 0.35rem;">🛵</div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">Volunteer Driver</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Community Logistics</div>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Common Account Details -->
+        <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin: 1.5rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;">
+          1. Core Account Credentials
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Contact Person / Admin Name *</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="e.g. Chef Rajesh Saxena" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Official Email Address *</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="contact@organization.org" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Secure Password *</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Min. 8 characters" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-phone">Contact Phone Number *</label>
+            <input type="text" id="reg-phone" class="form-control" placeholder="+91 98110 00000" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-address">Physical Facility / Street Address *</label>
+          <textarea id="reg-address" class="form-control" rows="2" placeholder="Complete address for GPS location and pickup dispatch" required></textarea>
+        </div>
+
+        <!-- Role Specific: DONOR -->
+        <div id="role-fields-donor">
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin: 1.5rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;">
+            2. Food Donor Profile
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="donor-org-name">Establishment / Brand Name *</label>
+              <input type="text" id="donor-org-name" class="form-control" placeholder="e.g. Royal Banquet Hall">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="donor-type">Establishment Category</label>
+              <select id="donor-type" class="form-control">
+                <option value="Restaurant">Fine Dining / Casual Restaurant</option>
+                <option value="Hotel">Hotel & Resort Kitchen</option>
+                <option value="Wedding Hall">Wedding & Banquet Hall</option>
+                <option value="Catering">Catering Contractor</option>
+                <option value="Supermarket">Supermarket & Grocery</option>
+                <option value="Individual">Community / Individual Donor</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="donor-fssai">Food Safety / FSSAI License Number</label>
+            <input type="text" id="donor-fssai" class="form-control" placeholder="e.g. FSSAI-11520034001920">
+          </div>
+        </div>
+
+        <!-- Role Specific: NGO -->
+        <div id="role-fields-ngo" style="display: none;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: #2563eb; text-transform: uppercase; margin: 1.5rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;">
+            2. NGO & Shelter Distribution Profile
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="ngo-org-name">NGO / Shelter Name *</label>
+              <input type="text" id="ngo-org-name" class="form-control" placeholder="e.g. Hope Food Mission">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ngo-reg-no">Govt Charity Registration No. *</label>
+              <input type="text" id="ngo-reg-no" class="form-control" placeholder="e.g. NGO-DL-2022-4819">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="ngo-capacity">Daily Feeding Capacity (Meals/Day) *</label>
+              <input type="number" id="ngo-capacity" class="form-control" value="150" min="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ngo-hours">Operational Intake Hours</label>
+              <input type="text" id="ngo-hours" class="form-control" value="08:00 AM - 10:00 PM">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+              <input type="checkbox" id="ngo-cold-storage" value="1" style="width: 18px; height: 18px; accent-color: var(--primary);">
+              <span>❄️ Facility has functional Cold Storage / Refrigeration for perishables</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Role Specific: VOLUNTEER -->
+        <div id="role-fields-volunteer" style="display: none;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent); text-transform: uppercase; margin: 1.5rem 0 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;">
+            2. Volunteer Logistics Profile
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="vol-vehicle">Vehicle Type *</label>
+              <select id="vol-vehicle" class="form-control">
+                <option value="Motorbike">Motorbike / Scooter (Fast local transit)</option>
+                <option value="Car">Car (Moderate crates / trunk space)</option>
+                <option value="Van">Cargo Van / Small Truck (Bulk banquets)</option>
+                <option value="Bicycle">Bicycle / Walking</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="vol-capacity">Max Carry Weight (kg)</label>
+              <input type="number" id="vol-capacity" class="form-control" value="30" min="5">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 2rem;">
+          Complete Registration & Enter Platform
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+<script>
+  // Dynamic radio button visual toggle
+  document.querySelectorAll('input[name="reg-role"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      ['donor', 'ngo', 'volunteer'].forEach(r => {
+        const card = document.getElementById(`card-role-${r}`);
+        if (r === radio.value) {
+          card.style.border = '2px solid var(--primary)';
+          card.style.background = 'var(--primary-subtle)';
+        } else {
+          card.style.border = '2px solid var(--border)';
+          card.style.background = 'white';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

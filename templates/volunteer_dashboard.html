@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Volunteer Logistics Hub – FoodBridge{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-title">
+      <h1>🛵 Volunteer Logistics Portal</h1>
+      <div class="dash-subtitle">
+        Accept food rescue missions, pickup surplus from kitchens, and deliver safely to partner shelters
+      </div>
+    </div>
+    <div class="dash-actions">
+      <span class="badge badge-low" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+        🟢 Active & Available for Dispatch
+      </span>
+    </div>
+  </div>
+
+  <!-- KPI Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon orange">🛵</div>
+      <div class="stat-info">
+        <div class="stat-label">Active Missions</div>
+        <div class="stat-value" id="vol-stat-active">1</div>
+        <div class="stat-meta">Currently in progress</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">✅</div>
+      <div class="stat-info">
+        <div class="stat-label">Total Missions Completed</div>
+        <div class="stat-value">38</div>
+        <div class="stat-meta">100% on-time delivery</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">🍲</div>
+      <div class="stat-info">
+        <div class="stat-label">Meals Transported</div>
+        <div class="stat-value">840+</div>
+        <div class="stat-meta">Safely delivered to shelters</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon purple">⭐</div>
+      <div class="stat-info">
+        <div class="stat-label">Driver Rating</div>
+        <div class="stat-value">4.95 / 5</div>
+        <div class="stat-meta">Top community volunteer</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transit Safety Box -->
+  <div class="safety-alert-box" style="border-left-color: var(--primary); background: #f0fdf4; border-color: #bbf7d0;">
+    <div class="safety-alert-icon" style="color: var(--primary);">⏱️</div>
+    <div class="safety-alert-content">
+      <h4 style="color: #14532d;">Rapid Transit & Safe Food Handling Rules</h4>
+      <p style="color: #166534;">
+        Transport warm food within <strong>45 minutes</strong> of pickup. Keep containers secured and level. Verify the 4-digit pickup code with the kitchen before taking custody, and the 4-digit delivery code from the NGO shelter upon final handover.
+      </p>
+    </div>
+  </div>
+
+  <!-- Section 1: Active Missions In Progress -->
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+        🛵 Active Mission In Progress
+      </h2>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Requires step-by-step OTP confirmation
+      </div>
+    </div>
+    <div class="donations-grid" id="volunteer-active-grid">
+      <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+        Loading active trips...
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Available Delivery Requests Near You -->
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+        📦 Available Deliveries Waiting for Drivers
+      </h2>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Ranked by proximity to your current location
+      </div>
+    </div>
+    <div class="donations-grid" id="volunteer-tasks-grid">
+      <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+        Loading delivery requests...
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal 1: Donor Pickup OTP Verification -->
+<div class="modal-overlay" id="pickup-otp-modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <div>
+        <h3 style="font-size: 1.2rem; font-weight: 800;">Verify Food Pickup from Donor</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;" id="pickup-modal-title">Donation</p>
+      </div>
+      <button class="modal-close" onclick="closePickupOtpModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form id="pickup-otp-form">
+        <input type="hidden" id="pickup-donation-id">
+
+        <div class="form-group">
+          <label class="form-label" for="pickup-otp-input">Enter Donor's 4-Digit Pickup Code *</label>
+          <input type="text" id="pickup-otp-input" class="form-control" placeholder="e.g. 4821" maxlength="4" style="font-size: 1.5rem; letter-spacing: 4px; text-align: center; font-weight: 800;" required>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; text-align: center;">
+            Ask the chef or donor dispatch manager for their code to verify handover
+          </div>
+        </div>
+
+        <div style="font-size: 0.8rem; color: var(--text-muted); background: var(--surface-alt); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+          ✓ Verified hygiene and temperature conditions<br>
+          ✓ Containers placed safely in vehicle carrier
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          ✓ Confirm Pickup & Start Transit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: NGO Delivery OTP Verification -->
+<div class="modal-overlay" id="volunteer-delivery-modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <div>
+        <h3 style="font-size: 1.2rem; font-weight: 800;">Complete Handover at Receiving NGO</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;" id="vol-delivery-modal-title">Donation</p>
+      </div>
+      <button class="modal-close" onclick="closeVolunteerDeliveryModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form id="volunteer-delivery-otp-form">
+        <input type="hidden" id="vol-delivery-id">
+        <input type="hidden" id="vol-delivery-servings">
+
+        <div class="form-group">
+          <label class="form-label" for="vol-delivery-otp-input">Enter Receiving NGO's 4-Digit Code *</label>
+          <input type="text" id="vol-delivery-otp-input" class="form-control" placeholder="e.g. 7912" maxlength="4" style="font-size: 1.5rem; letter-spacing: 4px; text-align: center; font-weight: 800;" required>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; text-align: center;">
+            Ask the shelter staff manager for their confirmation code
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-accent btn-block btn-lg">
+          🏁 Complete Delivery Mission
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/volunteer.js') }}"></script>
+{% endblock %}

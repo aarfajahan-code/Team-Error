@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}FoodBridge – Smart Food Redistribution Platform{% endblock %}</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS for OpenStreetMap -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Core App Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="{{ url_for('index_view') }}" class="brand">
+        <div class="brand-icon">🌱</div>
+        <span>FoodBridge</span>
+        <span class="brand-badge">Smart Platform</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('index_view') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+        <li><a href="{{ url_for('map_view') }}" class="nav-link {% if request.path == '/map' %}active{% endif %}">🗺️ Live Map</a></li>
+        <li><a href="{{ url_for('impact_view') }}" class="nav-link {% if request.path == '/impact' %}active{% endif %}">📊 Impact</a></li>
+
+        {% if current_user %}
+          {% if current_user.role == 'donor' %}
+            <li><a href="{{ url_for('donor_dashboard_view') }}" class="nav-link {% if request.path.startswith('/donor') %}active{% endif %}">🍲 Donor Hub</a></li>
+          {% elif current_user.role == 'ngo' %}
+            <li><a href="{{ url_for('ngo_dashboard_view') }}" class="nav-link {% if request.path.startswith('/ngo') %}active{% endif %}">🤝 NGO Hub</a></li>
+          {% elif current_user.role == 'volunteer' %}
+            <li><a href="{{ url_for('volunteer_dashboard_view') }}" class="nav-link {% if request.path.startswith('/volunteer') %}active{% endif %}">🛵 Volunteer Hub</a></li>
+          {% elif current_user.role == 'admin' %}
+            <li><a href="{{ url_for('admin_dashboard_view') }}" class="nav-link {% if request.path.startswith('/admin') %}active{% endif %}">🛡️ Admin Console</a></li>
+          {% endif %}
+        {% endif %}
+      </ul>
+
+      <div class="nav-actions">
+        <!-- 1-Click Demo Persona Switcher (For Hackathon Judges & Evaluators) -->
+        <div class="demo-switcher" id="demo-container">
+          <button class="demo-btn" onclick="toggleDemoDropdown(event)">
+            <span>⚡ Demo Personas</span>
+            <span>▾</span>
+          </button>
+          <div class="demo-dropdown" id="demo-dropdown">
+            <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; padding: 0.4rem 0.75rem 0.2rem;">
+              Instant Role Switching
+            </div>
+            <a href="javascript:void(0)" class="demo-item" onclick="switchDemo('donor')">
+              <span class="demo-role-badge badge-available">DONOR</span>
+              <span>Grand Palace Hotel</span>
+            </a>
+            <a href="javascript:void(0)" class="demo-item" onclick="switchDemo('ngo')">
+              <span class="demo-role-badge badge-requested">NGO</span>
+              <span>Hope Shelter</span>
+            </a>
+            <a href="javascript:void(0)" class="demo-item" onclick="switchDemo('volunteer')">
+              <span class="demo-role-badge badge-in_transit">VOLUNTEER</span>
+              <span>Rahul (Driver)</span>
+            </a>
+            <a href="javascript:void(0)" class="demo-item" onclick="switchDemo('admin')">
+              <span class="demo-role-badge badge-critical">ADMIN</span>
+              <span>Platform Admin</span>
+            </a>
+          </div>
+        </div>
+
+        {% if current_user %}
+          <!-- Notifications Bell -->
+          <div style="position: relative;" id="notif-container">
+            <button class="notif-bell-btn" onclick="toggleNotifDrawer(event)">
+              🔔
+              {% if unread_notifications_count > 0 %}
+                <span class="notif-badge" id="notif-badge">{{ unread_notifications_count }}</span>
+              {% endif %}
+            </button>
+            <div class="notif-drawer" id="notif-drawer">
+              <div class="notif-header">
+                <h4>Platform Alerts & Notifications</h4>
+                <button class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;" onclick="markAllNotificationsRead()">
+                  Mark Read
+                </button>
+              </div>
+              <ul class="notif-list" id="notif-list">
+                <li style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                  Loading alerts...
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User Profile & Logout -->
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: inline-flex; align-items: center; gap: 0.35rem;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block;"></span>
+              {{ current_user.name.split(' ')[0] }}
+            </span>
+            <a href="{{ url_for('api_logout') }}" class="btn btn-outline btn-sm">Sign Out</a>
+          </div>
+        {% else %}
+          <a href="{{ url_for('login_view') }}" class="btn btn-outline-primary btn-sm">Log In</a>
+          <a href="{{ url_for('register_view') }}" class="btn btn-primary btn-sm">Get Started</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages Banner -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="max-width: 1320px; margin: 1rem auto 0; padding: 0 1.5rem;">
+        {% for category, message in messages %}
+          <div style="padding: 0.85rem 1.25rem; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;
+            {% if category == 'success' %} background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;
+            {% elif category == 'danger' %} background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;
+            {% elif category == 'warning' %} background: #fffbeb; color: #b45309; border: 1px solid #fde68a;
+            {% else %} background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; {% endif %}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; color: inherit;">✕</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main View Container -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <div class="footer-brand">
+          <span>🌱</span> FoodBridge
+        </div>
+        <p style="font-size: 0.85rem; line-height: 1.5; color: #94a3b8; max-width: 320px;">
+          Smart food redistribution infrastructure bridging commercial kitchens, banquet halls, and food donors with verified NGOs and volunteer transport to end hunger and eliminate food waste.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('map_view') }}">Live Map Search</a></li>
+          <li><a href="{{ url_for('impact_view') }}">Impact Metrics</a></li>
+          <li><a href="{{ url_for('login_view') }}">Partner Login</a></li>
+          <li><a href="{{ url_for('register_view') }}">Register Organization</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>User Portals</h5>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('donor_dashboard_view') }}">Donor Kitchen Hub</a></li>
+          <li><a href="{{ url_for('ngo_dashboard_view') }}">NGO Food Bank Hub</a></li>
+          <li><a href="{{ url_for('volunteer_dashboard_view') }}">Volunteer Delivery Hub</a></li>
+          <li><a href="{{ url_for('admin_dashboard_view') }}">Administration & Compliance</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Food Safety First</h5>
+        <p style="font-size: 0.8rem; line-height: 1.45; color: #94a3b8;">
+          All donations comply with WHO and national food safety standards. Equipped with cold-chain tracking, shelf-life countdowns, and dual OTP handoff.
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 FoodBridge – Smart Food Redistribution Platform. Dedicated to Zero Food Waste & Zero Hunger (UN SDG 2 & 12).
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Global App JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

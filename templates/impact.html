@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Environmental & Social Impact – FoodBridge{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Page Header -->
+  <div class="dash-header">
+    <div class="dash-title">
+      <h1>🌱 Environmental & Social Impact Dashboard</h1>
+      <div class="dash-subtitle">
+        Real-time metrics tracking surplus food redistribution, emissions prevented, and communities nourished
+      </div>
+    </div>
+    <div class="dash-actions">
+      <a href="{{ url_for('map_view') }}" class="btn btn-outline-primary btn-sm">
+        🗺️ View Active Map
+      </a>
+      <button class="btn btn-primary btn-sm" onclick="window.print()">
+        📄 Export Impact Report
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon green">⚖️</div>
+      <div class="stat-info">
+        <div class="stat-label">Total Surplus Rescued</div>
+        <div class="stat-value" id="impact-food-kg">385 kg</div>
+        <div class="stat-meta">Safely diverted from landfills</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">🍲</div>
+      <div class="stat-info">
+        <div class="stat-label">Meals Served</div>
+        <div class="stat-value" id="impact-meals-served">890</div>
+        <div class="stat-meta">Distributed to vulnerable communities</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">🌍</div>
+      <div class="stat-info">
+        <div class="stat-label">CO2e Emissions Saved</div>
+        <div class="stat-value" id="impact-co2-saved">962 kg</div>
+        <div class="stat-meta">Equivalent to 42 mature trees planted</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon purple">🤝</div>
+      <div class="stat-info">
+        <div class="stat-label">Completed Deliveries</div>
+        <div class="stat-value" id="impact-missions">48</div>
+        <div class="stat-meta">Verified zero-wastage handovers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Trend Chart -->
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">📈 Surplus Redistribution Velocity (kg Saved / Day)</h3>
+      </div>
+      <div class="card-body" style="height: 320px;">
+        <canvas id="trendLineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Category Doughnut Chart -->
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🥗 Food Categories Breakdown</h3>
+      </div>
+      <div class="card-body" style="height: 320px; position: relative;">
+        <canvas id="categoryDoughnutChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ecosystem Partners & UN SDGs -->
+  <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem;">
+    <!-- Ecosystem Network Bar Chart -->
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🏢 Active Partner Distribution</h3>
+      </div>
+      <div class="card-body" style="height: 280px;">
+        <canvas id="partnerBarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- UN SDG Alignment Card -->
+    <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border-left: 4px solid var(--primary);">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 0.75rem;">
+        Aligned with UN Sustainable Development Goals
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem; color: var(--text-main);">
+        <div style="display: flex; gap: 0.6rem; align-items: flex-start;">
+          <span style="font-weight: 800; color: #b45309; background: #fef3c7; padding: 0.15rem 0.4rem; border-radius: var(--radius-sm);">SDG 2</span>
+          <div><strong>Zero Hunger:</strong> Routing excess banquet and commercial buffet food directly to children's homes and community kitchens.</div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: flex-start;">
+          <span style="font-weight: 800; color: #15803d; background: #dcfce7; padding: 0.15rem 0.4rem; border-radius: var(--radius-sm);">SDG 12</span>
+          <div><strong>Responsible Consumption:</strong> Drastically cutting commercial food waste through algorithmic proximity routing.</div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: flex-start;">
+          <span style="font-weight: 800; color: #0369a1; background: #e0f2fe; padding: 0.15rem 0.4rem; border-radius: var(--radius-sm);">SDG 13</span>
+          <div><strong>Climate Action:</strong> Preventing methane emissions generated when organic food waste decomposes in municipal landfills.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/impact.js') }}"></script>
+{% endblock %}

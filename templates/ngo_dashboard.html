@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}NGO Food Bank Hub – FoodBridge{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-title">
+      <h1>🤝 NGO & Shelter Food Distribution Hub</h1>
+      <div class="dash-subtitle">
+        Claim safe surplus food from commercial kitchens and coordinate volunteer delivery to beneficiaries
+      </div>
+    </div>
+    <div class="dash-actions">
+      <a href="{{ url_for('map_view') }}" class="btn btn-outline-primary btn-sm">
+        🗺️ View Nearby Donations on Map
+      </a>
+    </div>
+  </div>
+
+  <!-- Critical Urgency Alert Banner (Dynamically shown by ngo.js) -->
+  <div class="safety-alert-box" id="ngo-urgent-banner" style="display: none;"></div>
+
+  <!-- KPI Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon green">🍲</div>
+      <div class="stat-info">
+        <div class="stat-label">Available Surplus Meals</div>
+        <div class="stat-value" id="ngo-stat-available">5</div>
+        <div class="stat-meta">Within operational district</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">🚚</div>
+      <div class="stat-info">
+        <div class="stat-label">Deliveries In Transit</div>
+        <div class="stat-value" id="ngo-stat-transit">2</div>
+        <div class="stat-meta">En route to your facility</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">✅</div>
+      <div class="stat-info">
+        <div class="stat-label">Total Claims Fulfilled</div>
+        <div class="stat-value" id="ngo-stat-delivered">28</div>
+        <div class="stat-meta">Zero food waste record</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon purple">👥</div>
+      <div class="stat-info">
+        <div class="stat-label">People Nourished</div>
+        <div class="stat-value" id="ngo-stat-meals">650+</div>
+        <div class="stat-meta">Safe nutritious meals served</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Switcher -->
+  <div class="dash-tabs">
+    <button class="dash-tab-btn active" id="tab-btn-available">
+      <span>🍲 Available Food Donations</span>
+    </button>
+    <button class="dash-tab-btn" id="tab-btn-claimed">
+      <span>📦 Our Claimed Deliveries & Intake</span>
+    </button>
+  </div>
+
+  <!-- Tab 1: Available Surplus Feed -->
+  <div id="view-available">
+    <div class="donations-grid" id="ngo-available-grid">
+      <div style="text-align: center; padding: 3rem; grid-column: 1/-1;">
+        Loading available donations...
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: My Claimed Deliveries -->
+  <div id="view-claimed" style="display: none;">
+    <div class="donations-grid" id="ngo-claimed-grid">
+      <div style="text-align: center; padding: 3rem; grid-column: 1/-1;">
+        Loading active delivery missions...
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Verify Received Modal -->
+<div class="modal-overlay" id="verify-delivery-modal">
+  <div class="modal-content" style="max-width: 550px;">
+    <div class="modal-header">
+      <div>
+        <h3 style="font-size: 1.2rem; font-weight: 800;">Verify Food Intake & Complete Handover</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;" id="modal-verify-title">Donation Title</p>
+      </div>
+      <button class="modal-close" onclick="closeVerifyModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form id="verify-delivery-form">
+        <input type="hidden" id="verify-donation-id">
+
+        <div class="form-group">
+          <label class="form-label" for="verify-otp">Enter 4-Digit NGO Delivery Code *</label>
+          <input type="text" id="verify-otp" class="form-control" placeholder="e.g. 7912" maxlength="4" style="font-size: 1.5rem; letter-spacing: 4px; text-align: center; font-weight: 800;" required>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; text-align: center;">
+            Matches your delivery OTP code shown on the claimed card
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="verify-servings">Total Beneficiaries Nourished *</label>
+          <input type="number" id="verify-servings" class="form-control" value="50" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="verify-notes">Food Safety Inspection Checklist *</label>
+          <div style="font-size: 0.825rem; color: var(--text-muted); background: var(--surface-alt); padding: 0.75rem; border-radius: var(--radius-md); margin-bottom: 0.75rem;">
+            ✓ Inspected for clean packaging and tamper-free containers<br>
+            ✓ Verified thermal condition (warm meal or cold fresh produce)<br>
+            ✓ Distributed immediately or placed into cold storage
+          </div>
+          <textarea id="verify-notes" class="form-control" rows="2" placeholder="Notes on distribution (e.g. distributed to residents at evening community dining)"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          🏁 Confirm Handover & Log Impact
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/ngo.js') }}"></script>
+{% endblock %}

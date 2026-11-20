@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Food Redistribution Map – FoodBridge{% endblock %}
+
+{% block content %}
+<div class="map-page-wrapper">
+  
+  <!-- Map Filter Sidebar Drawer -->
+  <aside class="map-sidebar">
+    <div class="map-sidebar-header">
+      <h2>🗺️ Live Operations Map</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+        Real-time coordinates of available surplus food, NGOs, and volunteers
+      </p>
+    </div>
+
+    <div class="map-filters-body">
+      <!-- Layer Toggles -->
+      <div>
+        <div class="filter-group-title">Map Layers</div>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="filter-show-donations" class="filter-pin-type" checked style="accent-color: var(--primary);">
+            <span>🟢 <strong>Surplus Food Donations</strong></span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="filter-show-ngos" class="filter-pin-type" checked style="accent-color: #2563eb;">
+            <span>🔵 <strong>Verified NGOs & Food Banks</strong></span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="filter-show-volunteers" class="filter-pin-type" checked style="accent-color: var(--accent);">
+            <span>🟠 <strong>Active Volunteer Drivers</strong></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Urgency Filter -->
+      <div>
+        <div class="filter-group-title">Urgency & Shelf-Life</div>
+        <div class="filter-chips">
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-urgency" value="critical">
+            <span class="chip-label" style="border-color: #fca5a5; color: #b91c1c;">⚡ Critical (&lt;2 hrs)</span>
+          </label>
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-urgency" value="medium">
+            <span class="chip-label">⏳ Medium (&lt;4 hrs)</span>
+          </label>
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-urgency" value="low">
+            <span class="chip-label">🥗 Standard (&gt;4 hrs)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Category Filter -->
+      <div>
+        <div class="filter-group-title">Food Category</div>
+        <div class="filter-chips">
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-category" value="Cooked Meal">
+            <span class="chip-label">🍲 Cooked Meals</span>
+          </label>
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-category" value="Bakery & Dairy">
+            <span class="chip-label">🍞 Bakery & Dairy</span>
+          </label>
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-category" value="Fruits & Vegetables">
+            <span class="chip-label">🍎 Fresh Produce</span>
+          </label>
+          <label>
+            <input type="checkbox" class="chip-checkbox filter-category" value="Packaged Food">
+            <span class="chip-label">📦 Packaged Foods</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Action CTA -->
+      <div style="background: var(--surface-alt); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; border: 1px dashed var(--border); margin-top: auto;">
+        <div style="font-weight: 700; margin-bottom: 0.25rem;">Represent a Restaurant?</div>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.75rem;">
+          Add your surplus food now to appear on the live redistribution radar.
+        </p>
+        <a href="{{ url_for('donor_dashboard_view') }}" class="btn btn-primary btn-block btn-sm">
+          + Post Food Donation
+        </a>
+      </div>
+    </div>
+
+    <!-- Map Legend -->
+    <div class="map-legend">
+      <div class="legend-item">
+        <span class="legend-dot green"></span>
+        <span>Food Donors</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot blue"></span>
+        <span>Shelters/NGOs</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot orange"></span>
+        <span>Volunteers</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Leaflet Map Container -->
+  <div id="foodbridge-map"></div>
+
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Compliance & Verification Console – FoodBridge{% endblock %}
+
+{% block content %}
+<div class="container">
+  
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-title">
+      <h1>🛡️ Platform Administration & Verification Console</h1>
+      <div class="dash-subtitle">
+        Review NGO charity credentials, monitor platform-wide donations, enforce food compliance, and oversee system logs
+      </div>
+    </div>
+    <div class="dash-actions">
+      <span class="badge badge-critical" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+        🔐 Administrator Privileges Active
+      </span>
+    </div>
+  </div>
+
+  <!-- KPI Overview -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon purple">🛡️</div>
+      <div class="stat-info">
+        <div class="stat-label">Pending NGO Verifications</div>
+        <div class="stat-value" id="admin-pending-count">1</div>
+        <div class="stat-meta">Awaiting credential review</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">👥</div>
+      <div class="stat-info">
+        <div class="stat-label">Active Stakeholders</div>
+        <div class="stat-value">15</div>
+        <div class="stat-meta">Donors, NGOs, and volunteers</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">🍲</div>
+      <div class="stat-info">
+        <div class="stat-label">Total System Donations</div>
+        <div class="stat-value">9</div>
+        <div class="stat-meta">Tracked end-to-end</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue">⚡</div>
+      <div class="stat-info">
+        <div class="stat-label">Redistribution Efficiency</div>
+        <div class="stat-value">98.4%</div>
+        <div class="stat-meta">Zero food diversion rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Tab Navigation -->
+  <div class="dash-tabs">
+    <button class="dash-tab-btn admin-tab-btn active" data-view="admin-panel-ngos">
+      <span>🛡️ NGO Verification Queue</span>
+    </button>
+    <button class="dash-tab-btn admin-tab-btn" data-view="admin-panel-users">
+      <span>👥 User Management & Roles</span>
+    </button>
+    <button class="dash-tab-btn admin-tab-btn" data-view="admin-panel-donations">
+      <span>🍲 Platform Donation Surveillance</span>
+    </button>
+    <button class="dash-tab-btn admin-tab-btn" data-view="admin-panel-audit">
+      <span>📋 System Audit & Compliance Logs</span>
+    </button>
+  </div>
+
+  <!-- Panel 1: NGO Verification Queue -->
+  <div class="admin-view-panel" id="admin-panel-ngos">
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">NGO Partner Organizations Awaiting Administrative Verification</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Verification permits NGOs to claim high-urgency surplus food</span>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Organization</th>
+              <th>Govt Reg No.</th>
+              <th>Intake Capacity</th>
+              <th>Physical Location</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-pending-ngos-tbody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem;">Loading pending NGO credentials...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 2: User Management -->
+  <div class="admin-view-panel" id="admin-panel-users" style="display: none;">
+    <div class="card">
+      <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">All Registered Network Users</h3>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <label style="font-size: 0.85rem; font-weight: 600;">Filter Role:</label>
+          <select id="admin-role-filter" class="form-control" style="width: 160px; padding: 0.4rem 0.6rem; font-size: 0.85rem;">
+            <option value="">All Roles</option>
+            <option value="donor">Donors</option>
+            <option value="ngo">NGOs</option>
+            <option value="volunteer">Volunteers</option>
+            <option value="admin">Administrators</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>User / Organization</th>
+              <th>Role</th>
+              <th>Phone</th>
+              <th>Account Status</th>
+              <th>Joined Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-tbody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem;">Loading users...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 3: Donation Surveillance -->
+  <div class="admin-view-panel" id="admin-panel-donations" style="display: none;">
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Live Donation Surveillance & Quality Tracking</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Donation Title & Donor</th>
+              <th>Volume / Servings</th>
+              <th>Urgency</th>
+              <th>Status</th>
+              <th>Claimed NGO</th>
+              <th>Assigned Volunteer</th>
+            </tr>
+          </thead>
+          <tbody id="admin-donations-tbody">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem;">Loading donations...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 4: Audit Logs -->
+  <div class="admin-view-panel" id="admin-panel-audit" style="display: none;">
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.15rem; font-weight: 700;">Real-Time System Audit Trail</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Action</th>
+              <th>Actor</th>
+              <th>Event Details</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody id="admin-audit-tbody">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem;">Loading audit trail...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}
