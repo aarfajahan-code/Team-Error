@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🌱 FoodBridge – Smart Food Redistribution Platform
 
 > A full-stack, responsive web application connecting restaurants, hotels, banquet organisers, and supermarkets with verified NGOs and volunteer drivers to eliminate food waste and nourish communities in real time.
@@ -195,3 +196,6 @@ You can test every role using the credentials below, or simply click the **"⚡ 
 
 ## 📄 License
 MIT License. Built for hackathons, community food rescues, and zero-waste initiatives. Dedicated to UN Sustainable Development Goals 2 and 12.
+=======
+# hello 
+>>>>>>> ea0a0d504e174619a2611fd1cc64d434cd9a12ca
